@@ -44,13 +44,12 @@ Before running the setup steps make sure you have the following ready:
    - Install Zod: `pnpm add zod`
    - Install tRPC: `pnpm add @trpc/server @trpc/client @trpc/react-query @tanstack/react-query`
    - Install Prisma: `pnpm add prisma @prisma/client`
-   - Install Supabase driver: `pnpm add @supabase/supabase-js`
    - Install OpenAI SDK: `pnpm add openai`
    - Install development dependencies: `pnpm add -D @types/node @types/react tsx prettier eslint-config-prettier prettier-plugin-tailwindcss`
    - Initialize Shadcn: `pnpm dlx shadcn@latest init`
      - Select your theme and CSS variables when prompted
      - Verify `components.json` was generated at root
-     - Add components as needed: `pnpm dlx shadcn@latest add button input card dialog`
+     - Add components as needed: `pnpm dlx shadcn@latest add button input card dialog theme next-themes`
    
 3. **Configure environment variables**
    - Create `.env.example` with all required variable keys but no values (committed to version control):
@@ -78,17 +77,13 @@ Before running the setup steps make sure you have the following ready:
      AI_ORG_ID=your-openai-org-id (optional)
      ```
    - Verify `.env.local` is present in `.gitignore`
+   
+   - Create `src/env.ts` with Zod validation of the environmental variables. See [Addendum](#evntsx)
 
 4. **Configure Prisma and PostgreSQL database connection via Supabase**
    - Initialize Prisma: `pnpm dlx prisma init --datasource-provider postgresql`
    - Connect to Supabase database using `DATABASE_URL` from `.env.local`
-   - Create `src/server/db.ts` as the global Prisma client singleton:
-     ```ts
-     import { PrismaClient } from "@prisma/client";
-     const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
-     export const db = globalForPrisma.prisma ?? new PrismaClient();
-     if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
-     ```
+   - Create `src/server/db.ts` as the global Prisma client singleton. See [Addendum](#dbts)
    - Define database schema in `prisma/schema.prisma` with models for User, Session, Post, etc.
    - Generate Prisma client: `pnpm exec prisma generate`
    - Push schema to database: `pnpm exec prisma db push` (development) or `pnpm exec prisma migrate dev`
@@ -110,20 +105,26 @@ Before running the setup steps make sure you have the following ready:
    - Set up `src/middleware.ts` to protect routes
    - Create login and logout components in `src/app/components/auth/`
 
-7. **Implement tRPC API setup**
+7. **Set up providers wrappers**
+   - Create `src/app/components/providers.tsx`. See [Addendum](#providerststx)
+   - Include wrappers in `src/app/layout.tsx`
+     ```tsx
+       <Providers>{children}</Providers>
+     ```
+8. **Implement tRPC API setup**
    - Create `src/server/trpc/trpc.ts` with tRPC server setup and context
    - Create `src/server/trpc/root.ts` combining all sub-routers
    - Create initial routers in `src/server/trpc/routers/` (e.g. `post.ts`)
    - Create API handler at `src/server/app/api/trpc/[trpc]/route.ts`
    - Configure tRPC client for use in React components
 
-8. **Create sample data models and queries**
-   - Create tRPC procedures for CRUD operations in `src/trpc/routers/`
+9. **Create sample data models and queries**
+   - Create tRPC procedures for CRUD operations in `src/server/trpc/routers/`
    - Create sample API endpoints for testing
    - Implement input validation using `src/lib/utils/validation.ts` for shared rules and `src/server/ai/utils/validators.ts` for server-side rules
    - Implement proper error handling across procedures
 
-9. **Implement OpenAI integration**
+10. **Implement OpenAI integration**
    - Create OpenAI client configuration in `src/server/ai/config.ts`
    - Create OpenAI service instance in `src/server/ai/services/openai.ts`
    - Create chat completion service in `src/server/ai/services/chat-service.ts`
@@ -135,7 +136,7 @@ Before running the setup steps make sure you have the following ready:
    - Add tRPC procedures for AI features in `src/trpc/routers/ai.ts`
    - Implement error handling and rate limiting on all AI routes
 
-10. **Build basic routing structure and UI**
+11. **Build basic routing structure and UI**
     - Create main layout in `src/app/layout.tsx` with navigation and authentication state
     - Create global styles in `src/styles/globals.css`
     - Build homepage at `src/app/page.tsx` with welcome message and login button
@@ -145,7 +146,7 @@ Before running the setup steps make sure you have the following ready:
     - Implement loading states and error boundaries
     - Add responsive design with Tailwind CSS
 
-11. **Set up health check endpoint**
+12. **Set up health check endpoint**
     - Create `src/app/api/health/route.ts` to verify API, database, and AI service availability
     - Return status for each service dependency so issues can be isolated quickly
 
@@ -208,6 +209,7 @@ Before running the setup steps make sure you have the following ready:
 │
 └── src/
     ├── middleware.ts (Route protection and auth middleware for Next.js)
+    ├── env.ts (Zod validation of environmental variables)
     │
     ├── app/
     │   ├── layout.tsx (Root layout component)
@@ -327,3 +329,81 @@ Before running the setup steps make sure you have the following ready:
 
 ## 🏹 Next Step
 Create the boilerplate structure with templates for even faster start.
+
+# Addendum: 
+
+## db.ts
+`src/server/db.ts`
+   ```src/server/db.ts
+     import { PrismaClient } from "@prisma/client";
+     const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+     export const db = globalForPrisma.prisma ?? new PrismaClient();
+     if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+   ```
+
+## env.ts
+`src/env.ts`
+   ```src/env.ts
+     import { z } from "zod";
+
+     const envSchema = z.object({
+       NEXTAUTH_URL: z.string().url(),
+       NEXTAUTH_SECRET: z.string().min(1),
+       GITHUB_ID: z.string().min(1),
+       GITHUB_SECRET: z.string().min(1),
+       DATABASE_URL: z.string().url(),
+       AI_BASE_URL: z.string().url().optional(),
+       AI_API_KEY: z.string().min(1),
+       AI_MODEL: z.string().min(1),
+       AI_ORG_ID: z.string().optional(),
+     });
+
+     export const env = envSchema.parse(process.env);
+   ```
+
+## providers.tsx
+`src/app/components/providers.tsx`
+```src/app/components/providers.tsx
+"use client";
+
+import { useState } from "react";
+import { SessionProvider } from "next-auth/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
+import { httpBatchLink } from "@trpc/client";
+import { trpc } from "@/server/trpc/trpc";
+
+interface ProvidersProps {
+  children: React.ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
+  const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: "/api/trpc",
+        }),
+      ],
+    })
+  );
+
+  return (
+    <SessionProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
+  );
+}
+```
