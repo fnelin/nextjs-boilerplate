@@ -1,20 +1,20 @@
-# 🧱 Next.js Full Stack Boilerplate
+# Next.js Full Stack Boilerplate
 ## ⚡ TL;DR 
 Clone it, fill in your `.env.local`, run `pnpm install` and you're ready to go with a full-stack Next.js app with auth, database, tRPC and AI. Or paste it to your favorite AI agent and have it follow the steps.
 ## 🏗️ Why This Boilerplate 
-This is my personal starting point for full-stack Next.js projects. Instead of repeating the same setup decisions across projects, this gives me a production-ready foundation I can clone and build on.
+This is my personal starting point for full-stack Next.js projects that need an AI connection. Instead of repeating the same setup decisions across projects, this gives me a production-ready foundation I can clone and build on.
 ## 📦 What's Included 
   - **Next.js App Router** with TypeScript throughout
   - **tRPC** for end-to-end typesafe API communication between client and server
   - **NextAuth v4** with GitHub OAuth and Prisma adapter for authentication
   - **Prisma** connected to a **Supabase** PostgreSQL database
-  - **OpenAI SDK** configured for provider-agnostic AI integration — swap between OpenAI, Claude, or OpenRouter via environment variables
+  - **OpenAI SDK** configured for provider-agnostic AI integration - swap between OpenAI, Claude, or OpenRouter via environment variables
   - **Shadcn** for rapid UI development built on top of Tailwind CSS
   - **Zod** for validation across both client and server
 ## 🎯 Who This Is For 
 Developers who want to skip the boilerplate and get straight to building. You should be comfortable with TypeScript and have a basic understanding of Next.js. The setup assumes you have a Supabase project and GitHub OAuth application ready.
 ## 🚀 Getting Started 
-Follow the setup steps in PROJECT_PLAN.md top to bottom. Each step builds on the previous one — don't skip ahead. The verification section at the end will confirm everything is wired up correctly before you start building.
+Follow the setup steps in PROJECT_PLAN.md top to bottom. Each step builds on the previous one - don't skip ahead. The verification section at the end will confirm everything is wired up correctly before you start building.
 ## 🔄 Swapping AI Providers 
 The AI layer is intentionally provider-agnostic. The OpenAI SDK is used as the client but routes requests through AI_BASE_URL in your environment variables. To switch providers, update your .env.local - no code changes required.
 
@@ -33,7 +33,7 @@ Before running the setup steps make sure you have the following ready:
 1. **Initialize Next.js app router project with TypeScript**
    - Run `pnpm dlx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
    - Verify project structure and install dependencies with `pnpm install`
-   - Verify `postcss.config.ts` was generated as `.ts` and not `.js` — rename if needed
+   - Verify `postcss.config.ts` was generated as `.ts` and not `.js` - rename if needed
    - Verify `tsconfig.json` has the `@/*` alias pointing to `src/*`:
      ```json
      "paths": { "@/*": ["./src/*"] }
@@ -72,9 +72,10 @@ Before running the setup steps make sure you have the following ready:
      GITHUB_ID=your-github-client-id
      GITHUB_SECRET=your-github-client-secret
      DATABASE_URL=your-supabase-database-url
-     OPENAI_API_KEY=your-openai-api-key
-     OPENAI_MODEL=gpt-4o-mini
-     OPENAI_ORG_ID=your-openai-org-id (optional)
+     AI_BASE_URL=your-openai-base-url
+     AI_API_KEY=your-openai-api-key
+     AI_MODEL=gpt-4o-mini
+     AI_ORG_ID=your-openai-org-id (optional)
      ```
    - Verify `.env.local` is present in `.gitignore`
 
@@ -149,21 +150,21 @@ Before running the setup steps make sure you have the following ready:
     - Return status for each service dependency so issues can be isolated quickly
 
 **Relevant files**
-- `package.json` — Project dependencies
-- `.env.local` — Environment variables configuration
-- `prisma/schema.prisma` — Database schema definition
-- `src/app/api/trpc/[trpc]/route.ts` — tRPC router handler
-- `src/app/api/auth/[...nextauth]/route.ts` — NextAuth authentication API route
-- `src/server/auth/config.ts` — NextAuth providers and session configuration
-- `src/trpc/root.ts` — Root tRPC router combining all sub-routers
-- `src/trpc/trpc.ts` — tRPC server setup and context
-- `src/server/db.ts` — Global Prisma client singleton
-- `components.json` — Shadcn UI configuration
+- `package.json` - Project dependencies
+- `.env.local` - Environment variables configuration
+- `prisma/schema.prisma` - Database schema definition
+- `src/app/api/trpc/[trpc]/route.ts` - tRPC router handler
+- `src/app/api/auth/[...nextauth]/route.ts` - NextAuth authentication API route
+- `src/server/auth/config.ts` - NextAuth providers and session configuration
+- `src/trpc/root.ts` - Root tRPC router combining all sub-routers
+- `src/trpc/trpc.ts` - tRPC server setup and context
+- `src/server/db.ts` - Global Prisma client singleton
+- `components.json` - Shadcn UI configuration
 
 **Verification**
 1. Run `pnpm dev` and verify Next.js server is running
 2. Hit `http://localhost:3000/api/health` and verify all services return healthy
-3. Check GitHub OAuth flow works end to end — login, session, logout
+3. Check GitHub OAuth flow works end to end - login, session, logout
 4. Verify database connection via Prisma: `pnpm exec prisma studio`
 5. Confirm tRPC API endpoints respond correctly
 6. Confirm authentication state persists across page refreshes
