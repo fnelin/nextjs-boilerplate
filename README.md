@@ -46,7 +46,7 @@ Before running the setup steps make sure you have the following ready:
    - Install Prisma: `pnpm add prisma @prisma/client`
    - Install Supabase driver: `pnpm add @supabase/supabase-js`
    - Install OpenAI SDK: `pnpm add openai`
-   - Install development dependencies: `pnpm add -D @types/node @types/react tsx`
+   - Install development dependencies: `pnpm add -D @types/node @types/react tsx prettier eslint-config-prettier prettier-plugin-tailwindcss`
    - Initialize Shadcn: `pnpm dlx shadcn@latest init`
      - Select your theme and CSS variables when prompted
      - Verify `components.json` was generated at root
@@ -111,10 +111,10 @@ Before running the setup steps make sure you have the following ready:
    - Create login and logout components in `src/app/components/auth/`
 
 7. **Implement tRPC API setup**
-   - Create `src/trpc/trpc.ts` with tRPC server setup and context
-   - Create `src/trpc/root.ts` combining all sub-routers
-   - Create initial routers in `src/trpc/routers/` (e.g. `post.ts`)
-   - Create API handler at `src/app/api/trpc/[trpc]/route.ts`
+   - Create `src/server/trpc/trpc.ts` with tRPC server setup and context
+   - Create `src/server/trpc/root.ts` combining all sub-routers
+   - Create initial routers in `src/server/trpc/routers/` (e.g. `post.ts`)
+   - Create API handler at `src/server/app/api/trpc/[trpc]/route.ts`
    - Configure tRPC client for use in React components
 
 8. **Create sample data models and queries**
@@ -156,8 +156,8 @@ Before running the setup steps make sure you have the following ready:
 - `src/app/api/trpc/[trpc]/route.ts` - tRPC router handler
 - `src/app/api/auth/[...nextauth]/route.ts` - NextAuth authentication API route
 - `src/server/auth/config.ts` - NextAuth providers and session configuration
-- `src/trpc/root.ts` - Root tRPC router combining all sub-routers
-- `src/trpc/trpc.ts` - tRPC server setup and context
+- `src/server/trpc/root.ts` - Root tRPC router combining all sub-routers
+- `src/server/trpc/trpc.ts` - tRPC server setup and context
 - `src/server/db.ts` - Global Prisma client singleton
 - `components.json` - Shadcn UI configuration
 
@@ -193,6 +193,8 @@ Before running the setup steps make sure you have the following ready:
 ├── .env.local (Local environment variables - never committed)
 ├── .env.example (Template of required environment variables)
 ├── .gitignore (Files excluded from version control)
+├── .eslintrc.json (ESLint configuration)
+├── .prettierrc (Prettier configuration)
 ├── package.json (Project dependencies and scripts)
 ├── pnpm-lock.yaml (Dependency lock file for reproducible builds)
 ├── README.md (Project documentation and setup guide)
@@ -311,14 +313,13 @@ Before running the setup steps make sure you have the following ready:
     │   │   │   ├── validators.ts (Server-side AI input validation utilities)
     │   │   │   └── formatters.ts (AI response formatting utilities)
     │   │   └── config.ts (OpenAI configuration from environment variables)
+    │   ├── trpc/
+    │   │   ├── routers/
+    │   │   │   ├── CRUD.ts (tRPC procedure definitions for CRUD files)
+    │   │   │   └── ai.ts (tRPC procedure definitions for AI features)
+    │   │   ├── root.ts (Root tRPC router combining all sub-routers)
+    │   │   └── trpc.ts (tRPC server setup and context)
     │   └── db.ts (Global Prisma client singleton)
-    │
-    ├── trpc/
-    │   ├── routers/
-    │   │   ├── post.ts (tRPC procedure definitions for posts)
-    │   │   └── ai.ts (tRPC procedure definitions for AI features)
-    │   ├── root.ts (Root tRPC router combining all sub-routers)
-    │   └── trpc.ts (tRPC server setup and context)
     │
     └── styles/
         └── globals.css (Global styles and Tailwind base overrides)
