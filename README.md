@@ -117,10 +117,10 @@ Before running the setup steps make sure you have the following ready:
    - Create `src/server/auth/index.ts` to export auth helpers
    - Create API route at `src/app/api/auth/[...nextauth]/route.ts`
    - Set up `src/middleware.ts` to protect routes
-   - Create login and logout components in `src/app/components/auth/`
+   - Create login and logout components in `src/components/auth/`
 
 7. **Set up providers wrappers**
-   - Create `src/app/components/providers.tsx`. See [Addendum](#providerstsx)
+   - Create `src/components/providers.tsx`. See [Addendum](#providerstsx)
    - Include wrappers in `src/app/layout.tsx`
      ```tsx
        <Providers>{children}</Providers>
@@ -157,8 +157,8 @@ Before running the setup steps make sure you have the following ready:
     - Create global styles in `src/styles/globals.css`
     - Build homepage at `src/app/page.tsx` with welcome message and login button
     - Create dashboard page with protected routes
-    - Build shared UI components in `src/app/components/ui/`
-    - Build AI feature components in `src/app/components/ai/`
+    - Build shared UI components in `src/components/ui/`
+    - Build AI feature components in `src/components/ai/`
     - Implement loading states and error boundaries
     - Add responsive design with Tailwind CSS
 
@@ -237,70 +237,70 @@ Before running the setup steps make sure you have the following ready:
     │   ├── layout.tsx (Root layout component)
     │   ├── page.tsx (Homepage component)
     │   │
-    │   ├── api/
-    │   │   ├── auth/
-    │   │   │   └── [...nextauth]/
-    │   │   │       └── route.ts (NextAuth authentication API route)
-    │   │   ├── trpc/
-    │   │   │   └── [trpc]/
-    │   │   │       └── route.ts (tRPC API router handler)
-    │   │   ├── health/
-    │   │   │   └── route.ts (Application health check endpoint)
-    │   │   └── ai/
-    │   │       ├── chat/
-    │   │       │   └── route.ts (Chat completion API endpoint)
-    │   │       ├── embeddings/
-    │   │       │   └── route.ts (Embedding generation API endpoint)
-    │   │       └── moderation/
-    │   │           └── route.ts (Content moderation API endpoint)
-    │   │
-    │   └── components/
-    │       ├── providers.tsx (Client-side provider wrappers for session, tRPC, and theme)
-    │       ├── ui/
-    │       │   ├── button.tsx (Reusable button component)
-    │       │   ├── input.tsx (Reusable input component)
-    │       │   ├── card.tsx (Reusable card component)
-    │       │   ├── dialog.tsx (Reusable dialog component)
-    │       │   ├── form/
-    │       │   │   ├── form.tsx (Reusable form wrapper component)
-    │       │   │   ├── form-field.tsx (Form field with validation display)
-    │       │   │   └── form-label.tsx (Accessible form label component)
-    │       │   └── feedback/
-    │       │       ├── toast.tsx (Toast notification component)
-    │       │       ├── alert.tsx (Inline alert message component)
-    │       │       └── spinner.tsx (Loading spinner component)
-    │       ├── layout/
-    │       │   ├── header.tsx (Page header component)
-    │       │   ├── navigation.tsx (Navigation menu component)
-    │       │   └── footer.tsx (Page footer component)
+    │   └── api/
     │       ├── auth/
-    │       │   ├── login-button.tsx (Login trigger button component)
-    │       │   ├── logout-button.tsx (Logout trigger button component)
-    │       │   └── auth-provider.tsx (NextAuth session provider wrapper)
-    │       ├── dashboard/
-    │       │   ├── dashboard-layout.tsx (Dashboard page layout component)
-    │       │   ├── sidebar.tsx (Dashboard sidebar navigation component)
-    │       │   └── stats-grid.tsx (Dashboard statistics grid component)
-    │       ├── posts/
-    │       │   ├── post-list.tsx (Paginated post list component)
-    │       │   ├── post-card.tsx (Post summary card component)
-    │       │   └── post-detail.tsx (Full post detail view component)
+    │       │   └── [...nextauth]/
+    │       │       └── route.ts (NextAuth authentication API route)
+    │       ├── trpc/
+    │       │   └── [trpc]/
+    │       │       └── route.ts (tRPC API router handler)
+    │       ├── health/
+    │       │   └── route.ts (Application health check endpoint)
     │       └── ai/
     │           ├── chat/
-    │           │   ├── chat-interface.tsx (Top-level chat UI component)
-    │           │   ├── chat-message.tsx (Individual chat message component)
-    │           │   ├── chat-input.tsx (Chat message input and submit component)
-    │           │   └── chat-history.tsx (Scrollable chat history component)
+    │           │   └── route.ts (Chat completion API endpoint)
     │           ├── embeddings/
-    │           │   ├── similarity-search.tsx (Semantic similarity search component)
-    │           │   └── vector-display.tsx (Vector data visualisation component)
-    │           ├── moderation/
-    │           │   ├── content-warning.tsx (Content warning display component)
-    │           │   └── moderation-badge.tsx (Moderation status badge component)
-    │           └── shared/
-    │               ├── ai-loading.tsx (AI response loading state component)
-    │               ├── ai-error.tsx (AI error state display component)
-    │               └── ai-config.tsx (AI feature runtime configuration component)
+    │           │   └── route.ts (Embedding generation API endpoint)
+    │           └── moderation/
+    │               └── route.ts (Content moderation API endpoint)
+    │
+    ├── components/
+    │   ├── providers.tsx (Client-side provider wrappers for session, tRPC, and theme)
+    │   ├── ui/
+    │   │   ├── button.tsx (Reusable button component)
+    │   │   ├── input.tsx (Reusable input component)
+    │   │   ├── card.tsx (Reusable card component)
+    │   │   ├── dialog.tsx (Reusable dialog component)
+    │   │   ├── form/
+    │   │   │   ├── form.tsx (Reusable form wrapper component)
+    │   │   │   ├── form-field.tsx (Form field with validation display)
+    │   │   │   └── form-label.tsx (Accessible form label component)
+    │   │   └── feedback/
+    │   │       ├── toast.tsx (Toast notification component)
+    │   │       ├── alert.tsx (Inline alert message component)
+    │   │       └── spinner.tsx (Loading spinner component)
+    │   ├── layout/
+    │   │   ├── header.tsx (Page header component)
+    │   │   ├── navigation.tsx (Navigation menu component)
+    │   │   └── footer.tsx (Page footer component)
+    │   ├── auth/
+    │   │   ├── login-button.tsx (Login trigger button component)
+    │   │   ├── logout-button.tsx (Logout trigger button component)
+    │   │   └── auth-provider.tsx (NextAuth session provider wrapper)
+    │   ├── dashboard/
+    │   │   ├── dashboard-layout.tsx (Dashboard page layout component)
+    │   │   ├── sidebar.tsx (Dashboard sidebar navigation component)
+    │   │   └── stats-grid.tsx (Dashboard statistics grid component)
+    │   ├── posts/
+    │   │   ├── post-list.tsx (Paginated post list component)
+    │   │   ├── post-card.tsx (Post summary card component)
+    │   │   └── post-detail.tsx (Full post detail view component)
+    │   └── ai/
+    │       ├── chat/
+    │       │   ├── chat-interface.tsx (Top-level chat UI component)
+    │       │   ├── chat-message.tsx (Individual chat message component)
+    │       │   ├── chat-input.tsx (Chat message input and submit component)
+    │       │   └── chat-history.tsx (Scrollable chat history component)
+    │       ├── embeddings/
+    │       │   ├── similarity-search.tsx (Semantic similarity search component)
+    │       │   └── vector-display.tsx (Vector data visualisation component)
+    │       ├── moderation/
+    │       │   ├── content-warning.tsx (Content warning display component)
+    │       │   └── moderation-badge.tsx (Moderation status badge component)
+    │       └── shared/
+    │           ├── ai-loading.tsx (AI response loading state component)
+    │           ├── ai-error.tsx (AI error state display component)
+    │           └── ai-config.tsx (AI feature runtime configuration component)
     │
     ├── lib/
     │   ├── trpc/
@@ -355,6 +355,7 @@ Before running the setup steps make sure you have the following ready:
 
 ## 🏹 Next Step
 Create the boilerplate structure with templates for even faster start.   
+Include boilerplate for streaming AI responses.
 
 # Addendum: 
 Examplecode for significant files.
@@ -414,8 +415,8 @@ Environmental variables validation
 
 ### providers.tsx
 Providers wrapper
-`src/app/components/providers.tsx`
-```src/app/components/providers.tsx
+`src/components/providers.tsx`
+```src/components/providers.tsx
 "use client";
 
 import { useState } from "react";
