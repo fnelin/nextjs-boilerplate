@@ -126,7 +126,7 @@ Before running the setup steps make sure you have the following ready:
        <Providers>{children}</Providers>
      ```
 8. **Implement tRPC API setup**
-   - Create `src/lib/trpc/client.ts` with createTRPCReact client setup
+   - Create `src/lib/trpc/client.ts` with createTRPCReact client setup  [Addendum](#clienttsx)
    - Create `src/server/trpc/trpc.ts` with tRPC server setup and context
    - Create `src/server/trpc/root.ts` combining all sub-routers
    - Create `src/server/trpc/context.ts` with request context — db, session, user
@@ -370,7 +370,7 @@ Examplecode for significant files.
 ### Prettier configuration
 Minimal config that works with the Tailwind plugin
 `.prettierrc`
-   ```.prettierrc
+   ```json
   {
     "semi": true,
     "singleQuote": false,
@@ -382,17 +382,28 @@ Minimal config that works with the Tailwind plugin
 
 ### ESLint configuration
 Extends Next.js defaults and disables rules that conflict with Prettier `.eslintrc.json`
-  ```.eslintrc.json
+  ```json
   {
    "extends": ["next/core-web-vitals", "prettier"]
   }
   ```
 
+### client.ts
+tRPC React client
+
+`src/lib/trpc/client.ts`
+
+```ts
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "@/server/trpc/root";
+
+export const trpc = createTRPCReact<AppRouter>();
+```
 
 ### db.ts
 Singleton adapter for prisma and database operations
 `src/server/db.ts`
-   ```src/server/db.ts
+   ```ts
      import { PrismaClient } from "@prisma/client";
      const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
      export const db = globalForPrisma.prisma ?? new PrismaClient();
@@ -402,7 +413,7 @@ Singleton adapter for prisma and database operations
 ### env.ts
 Environmental variables validation
 `src/env.ts`
-   ```src/env.ts
+   ```ts
      import { z } from "zod";
 
      const envSchema = z.object({
@@ -423,7 +434,7 @@ Environmental variables validation
 ### providers.tsx
 Providers wrapper
 `src/components/providers.tsx`
-```src/components/providers.tsx
+```ts
 "use client";
 
 import { useState } from "react";
@@ -451,8 +462,8 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <SessionProvider>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -461,8 +472,8 @@ export function Providers({ children }: ProvidersProps) {
           >
             {children}
           </ThemeProvider>
-        </QueryClientProvider>
-      </trpc.Provider>
+        </trpc.Provider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }
