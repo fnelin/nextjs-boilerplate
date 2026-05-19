@@ -3,16 +3,19 @@
 Clone it, fill in your `.env.local`, run `pnpm install` and you're ready to go with a full-stack Next.js app with auth, database, tRPC and AI. Or paste it to your favorite AI agent and have it follow the steps.
 ## 🏗️ Why This Boilerplate 
 This is my personal starting point for full-stack Next.js projects that need an AI connection. Instead of repeating the same setup decisions across projects, this gives me a production-ready foundation I can clone and build on.
+### But why don't I just use T3
+Well simply put when a starter couples multiple evolving dependencies into a single integrated snapshot, ecosystem changes will degrade that snapshot unevenly, requiring cross-layer realignment before productive use.   
+This boilerplate is very much inspired by T3 but I didn't want it to become stale when parts are updated or lock the user into components which might have alternatives the user prefers. That is also the reason I'm not publishing a lot of code or installation packages.
 ## 📦 What's Included 
   - **Next.js App Router** with TypeScript throughout
+  - **Shadcn** for rapid UI development built on top of Tailwind CSS
+  - **Zod** for validation across both client and server
   - **tRPC** for end-to-end typesafe API communication between client and server
   - **NextAuth v4** with GitHub OAuth and Prisma adapter for authentication
   - **Prisma** connected to a **Supabase** PostgreSQL database
   - **OpenAI SDK** configured for provider-agnostic AI integration - swap between OpenAI, Claude, or OpenRouter via environment variables
-  - **Shadcn** for rapid UI development built on top of Tailwind CSS
-  - **Zod** for validation across both client and server
 ## 🎯 Who This Is For 
-Developers who want to skip the boilerplate and get straight to building. You should be comfortable with TypeScript and have a basic understanding of Next.js. The setup assumes you have a Supabase project and GitHub OAuth application ready.
+Developers who want a boilerplate roadmap and get straight to building. You should be comfortable with TypeScript and have a basic understanding of Next.js. The setup assumes you have a Supabase project and GitHub OAuth application ready or alternatives you feel confident about.
 ## 🚀 Getting Started 
 Follow the setup steps in PROJECT_PLAN.md top to bottom. Each step builds on the previous one - don't skip ahead. The verification section at the end will confirm everything is wired up correctly before you start building. If using AI to work with this project configuration replace everything above Prerequisites with:
 ```text
@@ -38,15 +41,16 @@ Before running the setup steps make sure you have the following ready:
 
 1. **Initialize Next.js app router project with TypeScript**
    - Run `pnpm dlx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
+   - Approve builds `pnmp approve-builds`
    - Verify project structure and install dependencies with `pnpm install`
-   - Verify `postcss.config.ts` was generated as `.ts` and not `.js` - rename if needed
+   - Verify `postcss.config.mjs` was generated.
    - Verify `tsconfig.json` has the `@/*` alias pointing to `src/*`:
      ```json
      "paths": { "@/*": ["./src/*"] }
      ```
 
 2. **Install all required dependencies**
-   - Install NextAuth: `pnpm add next-auth@4 @auth/prisma-adapter`
+   - Install NextAuth: `pnpm add next-auth@4 @auth/prisma-adapter superjson`
    - Install Zod: `pnpm add zod`
    - Install tRPC: `pnpm add @trpc/server @trpc/client @trpc/react-query @tanstack/react-query`
    - Install Prisma: `pnpm add prisma @prisma/client`
@@ -95,12 +99,13 @@ Before running the setup steps make sure you have the following ready:
 
 4. **Configure Prisma and PostgreSQL database connection via Supabase**
    - Initialize Prisma: `pnpm dlx prisma init --datasource-provider postgresql`
-   - Connect to Supabase database using `DATABASE_URL` from `.env.local`
-   - Create `src/server/db.ts` as the global Prisma client singleton. See [Addendum](#dbts)
+   - Connect to Supabase database using `DATABASE_URL` from `.env.local` //prisma defaults to .env double check how to handle this.
+    - Verify `provider = "prisma-client-js"` in `prisma/schema.prisma` or set relative output path to desired location
    - Define database schema in `prisma/schema.prisma` with models for User, Session, Post, Account, VerificationToken etc.
    - Generate Prisma client: `pnpm exec prisma generate`
-   - Use `pnpm exec prisma db push` for early prototyping — no migration history generated
+    - Use `pnpm exec prisma db push` for early prototyping — no migration history generated
    - Use `pnpm exec prisma migrate dev` once schema starts stabilising — generates versioned migration files required for production
+     - Create `src/server/db.ts` as the global Prisma client singleton. See [Addendum](#dbts)
 
 5. **Set up database seeding**
    - Create `prisma/seed.ts` with sample data for local development
@@ -116,7 +121,7 @@ Before running the setup steps make sure you have the following ready:
    - Create `src/server/auth/config.ts` with NextAuth configuration and GitHub provider
    - Create `src/server/auth/index.ts` to export auth helpers
    - Create API route at `src/app/api/auth/[...nextauth]/route.ts`
-   - Set up `src/middleware.ts` to protect routes
+   - Set up `src/proxy.ts` to protect routes
    - Create login and logout components in `src/components/auth/`
 
 7. **Set up providers wrappers**
@@ -156,7 +161,6 @@ Before running the setup steps make sure you have the following ready:
     - Create main layout in `src/app/layout.tsx` with navigation and authentication state
     - Create global styles in `src/app/globals.css`
     - Build homepage at `src/app/page.tsx` with welcome message and login button
-    - Create dashboard page with protected routes
     - Build shared UI components in `src/components/ui/`
     - Build AI feature components in `src/components/ai/`
     - Implement loading states and error boundaries
@@ -210,21 +214,22 @@ Autogenerated folders excluded from version control (such as *.git/*, *.next/*, 
 
 ```
 .
-├── next.config.ts     (Next.js framework configuration)
-├── tailwind.config.ts (Tailwind CSS theme and plugin configuration)
-├── tsconfig.json      (TypeScript compiler configuration)
-├── postcss.config.ts  (PostCSS plugin configuration for Tailwind)
 ├── .env.local         (Local environment variables - never committed)
 ├── .env.example       (Template of required environment variables)
 ├── .gitignore         (Files excluded from version control)
-├── .eslintrc.json     (ESLint configuration)
-├── .prettierrc        (Prettier configuration)
+├── components.json    (Shadcn configuration)
+├── eslint.config.mjs  (ESLint configuration)
+├── next.config.ts     (Next.js framework configuration)
+├── next-env.d.ts
 ├── package.json       (Project dependencies and scripts)
 ├── pnpm-lock.yaml     (Dependency lock file for reproducible builds)
+├── pnpm-workspace.yaml
+├── postcss.config.ts  (PostCSS plugin configuration for Tailwind)
+├── prisma.config.ts   (Prisma database configuration)
 ├── README.md          (Project documentation and setup guide)
-│
-├── .vscode/
-│   └── tasks.json  (VS Code task configurations)
+├── tsconfig.json      (TypeScript compiler configuration)
+├── tailwind.config.ts (Tailwind CSS theme and plugin configuration)
+├── .prettierrc        (Prettier configuration)
 │
 ├── public/         (public assets)
 │   ├── favicon.ico (Site favicon)
@@ -237,9 +242,8 @@ Autogenerated folders excluded from version control (such as *.git/*, *.next/*, 
 │
 │
 └── src/
-    ├── middleware.ts (Route protection and auth middleware for Next.js)
+    ├── proxy.ts (Route protection and auth middleware for Next.js)
     ├── env.ts        (Zod validation of environmental variables)
-    │
     ├── app/
     │   ├── globals.css (Global styles and Tailwind base overrides)
     │   ├── layout.tsx  (Root layout component)
@@ -350,16 +354,18 @@ Autogenerated folders excluded from version control (such as *.git/*, *.next/*, 
         │   └── config.ts         (OpenAI configuration from environment variables)
         ├── trpc/
         │   ├── routers/
-        │   │   ├── db.ts  (tRPC procedure definitions for database CRUD features)
-        │   │   └── ai.ts  (tRPC procedure definitions for AI features)
-        │   ├── root.ts    (Root tRPC router combining all sub-routers)
-        │   ├── context.ts (tRPC request context - db, session, user)
-        │   └── trpc.ts    (tRPC server setup, procedures and middleware)
-        └── db.ts          (Global Prisma client singleton)
+        │   │   ├── db.ts    (tRPC procedure definitions for database CRUD features)
+        │   │   ├── ai.ts    (tRPC procedure definitions for AI features)
+        │   │   └── user.ts  (tRPC procedure definitions for nextAuth user management features)
+        │   ├── root.ts      (Root tRPC router combining all sub-routers)
+        │   ├── context.ts   (tRPC request context - db, session, user)
+        │   └── trpc.ts      (tRPC server setup, procedures and middleware)
+        └── db.ts            (Global Prisma client singleton)
 
 ```
 
 ## 🏹 Next Step
+Update Next Auth to v5
 Create the boilerplate structure with templates for even faster start.   
 Include boilerplate for streaming AI responses.
 
@@ -441,6 +447,7 @@ import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { httpBatchLink } from "@trpc/client";
+import superjson from "superjson";
 import { trpc } from "@/lib/trpc/client";
 
 interface ProvidersProps {
@@ -454,6 +461,7 @@ export function Providers({ children }: ProvidersProps) {
       links: [
         httpBatchLink({
           url: "/api/trpc",
+          transformer: superjson,
         }),
       ],
     })
@@ -468,7 +476,7 @@ export function Providers({ children }: ProvidersProps) {
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-          >
+           >
             {children}
           </ThemeProvider>
         </trpc.Provider>
